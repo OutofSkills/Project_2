@@ -99,9 +99,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MessagingSystem.WebUI\MessagingSystem.WebUI.csproj">
+    <ProjectReference Include="..\MessagingSystem.WebUI\RentC.WebUI.csproj">
       <Project>{0352ECDB-734E-481B-A58F-B21A87C14AF0}</Project>
-      <Name>MessagingSystem.WebUI</Name>
+      <Name>RentC.WebUI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

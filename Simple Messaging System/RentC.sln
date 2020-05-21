@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.Core", "MessagingSystem.Core\MessagingSystem.Core.csproj", "{0C6D2009-9E0E-42BF-9D9C-8CC87245F437}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.Core", "MessagingSystem.Core\RentC.Core.csproj", "{0C6D2009-9E0E-42BF-9D9C-8CC87245F437}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.Services", "MessagingSystem.Services\MessagingSystem.Services.csproj", "{2CD2D5A7-CB67-474B-96C8-A5028F1C8279}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.Services", "MessagingSystem.Services\RentC.Services.csproj", "{2CD2D5A7-CB67-474B-96C8-A5028F1C8279}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.DataAccess.SQL", "MessagingSystem.DataAccess.SQL\MessagingSystem.DataAccess.SQL.csproj", "{F3376D39-CD46-43EC-B298-B3138F47C9CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.DataAccess.SQL", "MessagingSystem.DataAccess.SQL\RentC.DataAccess.SQL.csproj", "{F3376D39-CD46-43EC-B298-B3138F47C9CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.DataAccess.InMemory", "MessagingSystem.DataAccess.InMemory\MessagingSystem.DataAccess.InMemory.csproj", "{87A18978-E46F-4314-915B-4F7D6BEDA86C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.DataAccess.InMemory", "MessagingSystem.DataAccess.InMemory\RentC.DataAccess.InMemory.csproj", "{87A18978-E46F-4314-915B-4F7D6BEDA86C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.WebUI", "MessagingSystem.WebUI\MessagingSystem.WebUI.csproj", "{0352ECDB-734E-481B-A58F-B21A87C14AF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.WebUI", "MessagingSystem.WebUI\RentC.WebUI.csproj", "{0352ECDB-734E-481B-A58F-B21A87C14AF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingSystem.WebUI.Tests", "MessagingSystem.WebUI.Tests\MessagingSystem.WebUI.Tests.csproj", "{EEE15505-C5F2-41F3-B7E6-09E5D5625430}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentC.WebUI.Tests", "MessagingSystem.WebUI.Tests\RentC.WebUI.Tests.csproj", "{EEE15505-C5F2-41F3-B7E6-09E5D5625430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
