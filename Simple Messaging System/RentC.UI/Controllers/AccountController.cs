@@ -45,10 +45,14 @@ namespace RentC.UI.Controllers
 
                     return RedirectToAction("Welcome", "Account");
                 }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid Password or user ID");
+                }
             }
             else
             {
-                ModelState.AddModelError("", "Invalid Credentials");
+                ModelState.AddModelError("", "Invalid Password or user ID");
             }
 
 
