@@ -1,12 +1,10 @@
-﻿using RentC.UI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace RentC.UI.Controllers
+namespace RentC.WebUI.Controllers
 {
     public class HomeController : Controller
     {
@@ -17,7 +15,7 @@ namespace RentC.UI.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Welcome to Cart Rent App";
+            ViewBag.Message = "Your application description page.";
 
             return View();
         }
@@ -28,6 +26,5 @@ namespace RentC.UI.Controllers
 
             return View();
         }
-
     }
 }
