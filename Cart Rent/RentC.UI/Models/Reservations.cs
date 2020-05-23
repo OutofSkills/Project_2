@@ -27,6 +27,7 @@ namespace RentC.UI.Models
         public System.DateTime StartDate { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public System.DateTime EndDate { get; set; }
+        [Required]
         public string Location { get; set; }
         public string CouponCode { get; set; }
         public string CartPlate { get; set; }

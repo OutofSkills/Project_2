@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -40,8 +41,8 @@ namespace RentC.UI.Controllers
         public ActionResult Create()
         {
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate");
-            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description");
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name");
+            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "CouponCode");
+            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "CustomerID");
             return View();
         }
 
@@ -50,13 +51,51 @@ namespace RentC.UI.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ReservationID,CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservations)
+        public ActionResult Create([Bind(Include = "CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservations)
         {
             if (ModelState.IsValid)
             {
-                db.Reservations.Add(reservations);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (validateCar(reservations))
+                {
+                    if(validateCustomer(reservations.CustomerID))
+                    {
+                        if (validateLocation(reservations.Location, reservations.CarID))
+                        {
+                            if (reservations.EndDate > reservations.StartDate)
+                            {
+                                db.Reservations.Add(new Reservations
+                                {
+                                    CarID = reservations.CarID,
+                                    CustomerID = reservations.CustomerID,
+                                    StartDate = reservations.StartDate,
+                                    EndDate = reservations.EndDate,
+                                    Location = reservations.Location,
+                                    CouponCode = reservations.CouponCode,
+                                    ReservStatsID = 1
+                                });
+
+                                db.SaveChanges();
+                                return RedirectToAction("", "Home");
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Invalid time interval");
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "This car is not available in your location");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Your ID is not valid");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Car is unavailable");
+                }
             }
 
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
@@ -137,6 +176,42 @@ namespace RentC.UI.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private bool validateCar(Reservations reservations)
+        {
+            string sDate = reservations.StartDate.ToString("yyyy-MM-dd");
+            string eDate = reservations.EndDate.ToString("yyyy-MM-dd");
+
+            var carList = db.Database.SqlQuery<int>("SELECT DISTINCT ReservationID FROM Reservations WHERE CarID = @carID" +
+                " and ReservationID IN (SELECT ReservationID FROM Reservations WHERE NOT ((StartDate > @endDate) OR (EndDate < @startDate)))"
+                , new SqlParameter("carID", reservations.CarID), new SqlParameter("endDate", eDate), new SqlParameter("startDate", eDate)).ToList();
+         
+            if (carList.FirstOrDefault() > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool validateCustomer(int id)
+        {
+            if(db.Customers.Find(id) == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool validateLocation(string location, int carID)
+        {
+            var carAtLocation = db.Database.SqlQuery<int>("Select CarID FROM Cars WHERE Location = @location", new SqlParameter("location", location)).ToList<int>(); ;
+            if(carAtLocation.Contains(carID))
+            {
+                return true;
+            }
+                return false;
         }
     }
 }
