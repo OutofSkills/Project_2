@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace RentC.UI.Controllers
 {
-    
+    [Authorize]
     public class AccountController : Controller
     {
         // GET: Account
@@ -23,7 +23,6 @@ namespace RentC.UI.Controllers
         {
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
