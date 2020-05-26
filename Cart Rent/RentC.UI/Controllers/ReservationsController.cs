@@ -16,9 +16,9 @@ namespace RentC.UI.Controllers
         private RentC_Entities db = new RentC_Entities();
 
         // GET: Reservations
-        public ActionResult Index()
+        public ActionResult ListRents()
         {
-            var reservations = db.Reservations.Include(r => r.Cars).Include(r => r.Customers).Include(r => r.ReservationStatuses.Name);
+            var reservations = db.Reservations.Include(r => r.Cars).Include(r => r.Customers).Include(r => r.ReservationStatuses);
             return View(reservations.ToList());
         }
 
@@ -75,7 +75,9 @@ namespace RentC.UI.Controllers
                                 });
 
                                 db.SaveChanges();
-                                return RedirectToAction("", "Home");
+                                Session["ReservationID"] = db.Reservations.Max(d => d.ReservationID);
+
+                                return RedirectToAction("GetRentID", "Reservations");
                             }
                             else
                             {
@@ -101,6 +103,7 @@ namespace RentC.UI.Controllers
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
             ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
             ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
+
             return View(reservations);
         }
 
@@ -111,6 +114,7 @@ namespace RentC.UI.Controllers
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate");
             ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "CouponCode");
             ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "CustomerID");
+
             return View();
         }
 
@@ -175,6 +179,7 @@ namespace RentC.UI.Controllers
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
             ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
             ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
+
             return View(reservations);
         }
 
@@ -202,6 +207,11 @@ namespace RentC.UI.Controllers
             db.Reservations.Remove(reservations);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult GetRentID()
+        {
+            return View();
         }
 
         protected override void Dispose(bool disposing)
