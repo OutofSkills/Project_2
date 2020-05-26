@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="RentModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="academy_netModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Cars">
           <Key>
             <PropertyRef Name="CarID" />
@@ -172,7 +172,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="RentModelStoreContainer">
+        <EntityContainer Name="academy_netModelStoreContainer">
           <EntitySet Name="Cars" EntityType="Self.Cars" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Coupons" EntityType="Self.Coupons" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
@@ -215,7 +215,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="RentModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="academy_netModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Cars">
           <Key>
             <PropertyRef Name="CarID" />
@@ -367,7 +367,7 @@
           <End Role="Permissions" Type="Self.Permissions" Multiplicity="*" />
           <End Role="Roles" Type="Self.Roles" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="RentC_Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="academy_netEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Cars" EntityType="Self.Cars" />
           <EntitySet Name="Coupons" EntityType="Self.Coupons" />
           <EntitySet Name="Customers" EntityType="Self.Customers" />
@@ -406,9 +406,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="RentModelStoreContainer" CdmEntityContainer="RentC_Entities">
+        <EntityContainerMapping StorageEntityContainer="academy_netModelStoreContainer" CdmEntityContainer="academy_netEntities">
           <EntitySetMapping Name="Cars">
-            <EntityTypeMapping TypeName="RentModel.Cars">
+            <EntityTypeMapping TypeName="academy_netModel.Cars">
               <MappingFragment StoreEntitySet="Cars">
                 <ScalarProperty Name="CarID" ColumnName="CarID" />
                 <ScalarProperty Name="Plate" ColumnName="Plate" />
@@ -420,7 +420,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Coupons">
-            <EntityTypeMapping TypeName="RentModel.Coupons">
+            <EntityTypeMapping TypeName="academy_netModel.Coupons">
               <MappingFragment StoreEntitySet="Coupons">
                 <ScalarProperty Name="CouponCode" ColumnName="CouponCode" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -429,7 +429,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Customers">
-            <EntityTypeMapping TypeName="RentModel.Customers">
+            <EntityTypeMapping TypeName="academy_netModel.Customers">
               <MappingFragment StoreEntitySet="Customers">
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -439,7 +439,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Permissions">
-            <EntityTypeMapping TypeName="RentModel.Permissions">
+            <EntityTypeMapping TypeName="academy_netModel.Permissions">
               <MappingFragment StoreEntitySet="Permissions">
                 <ScalarProperty Name="PermissionID" ColumnName="PermissionID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -448,7 +448,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Reservations">
-            <EntityTypeMapping TypeName="RentModel.Reservations">
+            <EntityTypeMapping TypeName="academy_netModel.Reservations">
               <MappingFragment StoreEntitySet="Reservations">
                 <ScalarProperty Name="ReservationID" ColumnName="ReservationID" />
                 <ScalarProperty Name="CarID" ColumnName="CarID" />
@@ -463,7 +463,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReservationStatuses">
-            <EntityTypeMapping TypeName="RentModel.ReservationStatuses">
+            <EntityTypeMapping TypeName="academy_netModel.ReservationStatuses">
               <MappingFragment StoreEntitySet="ReservationStatuses">
                 <ScalarProperty Name="ReservStatsID" ColumnName="ReservStatsID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -472,7 +472,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Roles">
-            <EntityTypeMapping TypeName="RentModel.Roles">
+            <EntityTypeMapping TypeName="academy_netModel.Roles">
               <MappingFragment StoreEntitySet="Roles">
                 <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -481,7 +481,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="RentModel.Users">
+            <EntityTypeMapping TypeName="academy_netModel.Users">
               <MappingFragment StoreEntitySet="Users">
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
@@ -490,7 +490,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="RolesPermissions" TypeName="RentModel.RolesPermissions" StoreEntitySet="RolesPermissions">
+          <AssociationSetMapping Name="RolesPermissions" TypeName="academy_netModel.RolesPermissions" StoreEntitySet="RolesPermissions">
             <EndProperty Name="Permissions">
               <ScalarProperty Name="PermissionID" ColumnName="PermissionID" />
             </EndProperty>

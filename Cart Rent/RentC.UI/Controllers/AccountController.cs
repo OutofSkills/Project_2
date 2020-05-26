@@ -7,11 +7,11 @@ using System.Web.Mvc;
 
 namespace RentC.UI.Controllers
 {
-    [Authorize]
+    
     public class AccountController : Controller
     {
         // GET: Account
-        private readonly DatabaseEntity database = new DatabaseEntity();
+        private readonly RentC_Entities database = new RentC_Entities();
 
         public ActionResult Welcome()
         {

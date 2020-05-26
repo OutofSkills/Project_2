@@ -13,7 +13,7 @@ namespace RentC.UI.Controllers
 {
     public class ReservationsController : Controller
     {
-        private DatabaseEntity db = new DatabaseEntity();
+        private RentC_Entities db = new RentC_Entities();
 
         // GET: Reservations
         public ActionResult Index()
@@ -105,41 +105,76 @@ namespace RentC.UI.Controllers
         }
 
         // GET: Reservations/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Reservations reservations = db.Reservations.Find(id);
-            if (reservations == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
-            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
-            ViewBag.ReservStatsID = new SelectList(db.ReservationStatuses, "ReservStatsID", "Name", reservations.ReservStatsID);
-            return View(reservations);
+            ViewBag.ReservationID = new SelectList(db.Reservations, "ReservationID", "ReservationID");
+            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate");
+            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "CouponCode");
+            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "CustomerID");
+            return View();
         }
 
-        // POST: Reservations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ReservationID,CarID,CustomerID,ReservStatsID,StartDate,EndDate,Location,CouponCode,CartPlate")] Reservations reservations)
+        public ActionResult Edit([Bind(Include = "ReservationID, CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservations)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(reservations).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (db.Reservations.Find(reservations.ReservationID) != null)
+                {
+                    if (validateCar(reservations))
+                    {
+                        if (validateCustomer(reservations.CustomerID))
+                        {
+                            if (validateLocation(reservations.Location, reservations.CarID))
+                            {
+                                if (reservations.EndDate > reservations.StartDate)
+                                {
+                                    var details = db.Reservations.Where(d => d.ReservationID == reservations.ReservationID).First();
+
+                                    details.CarID = reservations.CarID;
+                                    details.CustomerID = reservations.CustomerID;
+                                    details.StartDate = reservations.StartDate;
+                                    details.EndDate = reservations.EndDate;
+                                    details.Location = reservations.Location;
+                                    details.CouponCode = reservations.CouponCode;
+                                    details.ReservStatsID = 1;
+
+
+                                    db.SaveChanges();
+                                    return RedirectToAction("", "Home");
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Invalid time interval");
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "This car is not available in your location");
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Your ID is not valid");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Car is unavailable");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Your reservation ID is not valid");
+                }
             }
+
+            ViewBag.ReservationID = new SelectList(db.Reservations, "ReservationID", "ReservationID");
             ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
             ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
             ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
-            ViewBag.ReservStatsID = new SelectList(db.ReservationStatuses, "ReservStatsID", "Name", reservations.ReservStatsID);
             return View(reservations);
         }
 

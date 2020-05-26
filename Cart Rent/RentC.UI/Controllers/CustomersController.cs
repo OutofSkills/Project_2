@@ -12,7 +12,7 @@ namespace RentC.UI.Controllers
 {
     public class CustomersController : Controller
     {
-        private DatabaseEntity db = new DatabaseEntity();
+        private RentC_Entities db = new RentC_Entities();
 
         // GET: Customers
         public ActionResult Index()

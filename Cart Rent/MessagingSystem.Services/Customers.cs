@@ -12,21 +12,20 @@ namespace RentC.UI.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Reservations
+    public partial class Customers
     {
-        public int ReservationID { get; set; }
-        public int CarID { get; set; }
-        public int CustomerID { get; set; }
-        public byte ReservStatsID { get; set; }
-        public System.DateTime StartDate { get; set; }
-        public System.DateTime EndDate { get; set; }
-        public string Location { get; set; }
-        public string CouponCode { get; set; }
-        public string CartPlate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Customers()
+        {
+            this.Reservations = new HashSet<Reservations>();
+        }
     
-        public virtual Cars Cars { get; set; }
-        public virtual Coupons Coupons { get; set; }
-        public virtual Customers Customers { get; set; }
-        public virtual ReservationStatuses ReservationStatuses { get; set; }
+        public int CustomerID { get; set; }
+        public string Name { get; set; }
+        public System.DateTime BirthDate { get; set; }
+        public string Location { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reservations> Reservations { get; set; }
     }
 }

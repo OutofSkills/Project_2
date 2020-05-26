@@ -13,10 +13,10 @@ namespace RentC.UI.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class RentC_Entities : DbContext
+    public partial class DatabaseEntity : DbContext
     {
-        public RentC_Entities()
-            : base("name=RentC_Entities")
+        public DatabaseEntity()
+            : base("name=academy_netEntities")
         {
         }
     

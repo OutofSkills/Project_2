@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="037378a9de014de688e1752583685e0d" Name="Diagram1">
+        <EntityTypeShape EntityType="academy_netModel.Cars" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Coupons" Width="1.5" PointX="0.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Customers" Width="1.5" PointX="0.75" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Permissions" Width="1.5" PointX="5.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Reservations" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.ReservationStatuses" Width="1.5" PointX="0.75" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Roles" Width="1.5" PointX="8" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="academy_netModel.Users" Width="1.5" PointX="10.25" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="academy_netModel.Reservations_Cars" ManuallyRouted="false" />
+        <AssociationConnector Association="academy_netModel.Reservations_Coupons" ManuallyRouted="false" />
+        <AssociationConnector Association="academy_netModel.Reservations_Customers" ManuallyRouted="false" />
+        <AssociationConnector Association="academy_netModel.Reservations_ReservationStatuses" ManuallyRouted="false" />
+        <AssociationConnector Association="academy_netModel.Users_Roles" ManuallyRouted="false" />
+        <AssociationConnector Association="academy_netModel.RolesPermissions" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
