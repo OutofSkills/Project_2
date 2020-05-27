@@ -12,10 +12,10 @@ namespace RentC.UI.Controllers
 {
     public class CustomersController : Controller
     {
-        private DatabaseEntity db = new DatabaseEntity();
+        private RentC_Entities db = new RentC_Entities();
 
         // GET: Customers
-        public ActionResult Index()
+        public ActionResult CustomerList()
         {
             return View(db.Customers.ToList());
         }
@@ -50,42 +50,53 @@ namespace RentC.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customers);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ValidateID(customers.CustomerID))
+                {
+                    db.Customers.Add(customers);
+                    db.SaveChanges();
+                    return RedirectToAction("", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "This ID already exists");
+                }
             }
 
             return View(customers);
         }
 
-        // GET: Customers/Edit/5
-        public ActionResult Edit(int? id)
+        // GET:
+        public ActionResult Edit()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customers customers = db.Customers.Find(id);
-            if (customers == null)
-            {
-                return HttpNotFound();
-            }
-            return View(customers);
+            return View();
         }
 
-        // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CustomerID,Name,BirthDate,Location")] Customers customers)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customers).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (!ValidateID(customers.CustomerID))
+                {
+                    var details = db.Customers.Where(c => c.CustomerID == customers.CustomerID).ToList();
+
+                    details.ForEach(c =>
+                    {
+                        c.Name = customers.Name;
+                        c.BirthDate = customers.BirthDate;
+                        c.Location = customers.Location;
+                    });
+
+                    db.SaveChanges();
+                    return RedirectToAction("", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "This ID doesn't exist");
+                }
             }
+
             return View(customers);
         }
 
@@ -112,7 +123,7 @@ namespace RentC.UI.Controllers
             Customers customers = db.Customers.Find(id);
             db.Customers.Remove(customers);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("", "Home");
         }
 
         protected override void Dispose(bool disposing)
@@ -123,5 +134,15 @@ namespace RentC.UI.Controllers
             }
             base.Dispose(disposing);
         }
+
+        private bool ValidateID(int id)
+        {
+            if(db.Customers.Find(id) == null)
+            {
+                return true;
+            }
+            return false;
+        }
+        
     }
 }

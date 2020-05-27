@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<RentC.UI.Models.Reservations>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Reservations List";
 }
 
-<h2>Index</h2>
+<h2>Reservations List</h2>
 
 <table class="table">
     <tr>
@@ -48,6 +48,9 @@
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.ReservationStatuses.Name)
+    </td>
+    <td>
+        @Html.ActionLink("Details", "Details", new { id = item.ReservationID })
     </td>
 </tr>
 }

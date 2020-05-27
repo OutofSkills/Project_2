@@ -11,7 +11,8 @@ namespace RentC.UI.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Customers
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -20,9 +21,15 @@ namespace RentC.UI.Models
             this.Reservations = new HashSet<Reservations>();
         }
     
+        [Required]
+        [Display(Name = "Client ID")]
         public int CustomerID { get; set; }
+        [Required]
+        [Display(Name = "Client Name")]
         public string Name { get; set; }
-        public System.DateTime BirthDate { get; set; }
+        [Display(Name = "Birth Date")]
+        public Nullable<System.DateTime> BirthDate { get; set; }
+        [Required]
         public string Location { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
