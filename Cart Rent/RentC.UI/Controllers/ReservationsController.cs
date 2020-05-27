@@ -132,7 +132,7 @@ namespace RentC.UI.Controllers
                 {
                     if (ValidateCar(reservations))
                     {
-                        if (ValidateCustomer(reservations.CustomerID) && ValidateCustomerToUpdate(reservations.ReservationID, reservations.CustomerID)) ////
+                        if (ValidateCustomer(reservations.CustomerID) && ValidateChangeAttempt(reservations.ReservationID, reservations.CustomerID)) ////
                         {
                             if (ValidateLocation(reservations.Location, reservations.CarID))
                             {
@@ -164,7 +164,7 @@ namespace RentC.UI.Controllers
                         }
                         else
                         {
-                            ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with your ID");
+                            ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with this ID");
                         }
                     }
                     else
@@ -186,30 +186,34 @@ namespace RentC.UI.Controllers
             return View(reservations);
         }
 
-        // GET: Reservations/Delete/5
-        public ActionResult Delete(int? id)
+        // GET: Reservations/Cancel
+        public ActionResult CancelReservation()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Reservations reservations = db.Reservations.Find(id);
-            if (reservations == null)
-            {
-                return HttpNotFound();
-            }
-            return View(reservations);
+            return View();
         }
 
-        // POST: Reservations/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Reservations/Cancel
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        [HttpPost]
+        public ActionResult CancelReservation([Bind(Include = "ReservationID, CustomerID")] Reservations reservations)
         {
-            Reservations reservations = db.Reservations.Find(id);
-            db.Reservations.Remove(reservations);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                if (ValidateChangeAttempt(reservations.ReservationID, reservations.CustomerID))
+                {
+                    var rent = db.Reservations.Where(r => r.ReservationID == reservations.ReservationID).ToList();
+                    rent.ForEach(r => r.ReservStatsID = 3);
+                    db.SaveChanges();
+
+                    return RedirectToAction("", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with this ID");
+                }
+            }
+
+            return View(reservations);
         }
 
         public ActionResult GetRentID()
@@ -233,7 +237,7 @@ namespace RentC.UI.Controllers
 
             var carList = db.Database.SqlQuery<int>("SELECT DISTINCT ReservationID FROM Reservations WHERE CarID = @carID" +
                 " and ReservationID IN (SELECT ReservationID FROM Reservations WHERE NOT ((StartDate > @endDate) OR (EndDate < @startDate)))"
-                , new SqlParameter("carID", reservations.CarID), new SqlParameter("endDate", eDate), new SqlParameter("startDate", eDate)).ToList();
+                , new SqlParameter("carID", reservations.CarID), new SqlParameter("endDate", eDate), new SqlParameter("startDate", sDate)).ToList();
          
             if (carList.FirstOrDefault() > 0)
             {
@@ -254,11 +258,15 @@ namespace RentC.UI.Controllers
 
         //Used to verify if there's a resservation with the given reservation ID and customer's ID
         //to be sure that the user won't change other reservations by mistake
-        private bool ValidateCustomerToUpdate(int rentID, int customerID)  
+        private bool ValidateChangeAttempt(int rentID, int customerID)  
         {
-            var validateCustomerID = db.Reservations.Where(id => id.ReservationID == rentID && id.CustomerID == customerID);
-            if (validateCustomerID.FirstOrDefault() != null)
-                return true;
+            if (db.Reservations.Find(rentID) != null && db.Customers.Find(customerID) != null)
+            {
+                var validateCustomerID = db.Reservations.Where(id => id.ReservationID == rentID && id.CustomerID == customerID);
+
+                if (validateCustomerID.FirstOrDefault() != null)
+                    return true;
+            }
             return false;
         }
 

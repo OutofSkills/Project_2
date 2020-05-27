@@ -11,7 +11,8 @@ namespace RentC.UI.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Cars
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,6 +22,7 @@ namespace RentC.UI.Models
         }
     
         public int CarID { get; set; }
+        [Display(Name = "Cart Plate")]
         public string Plate { get; set; }
         public string Manufacturer { get; set; }
         public string Model { get; set; }

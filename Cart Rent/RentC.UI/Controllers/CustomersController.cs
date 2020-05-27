@@ -15,7 +15,7 @@ namespace RentC.UI.Controllers
         private RentC_Entities db = new RentC_Entities();
 
         // GET: Customers
-        public ActionResult Index()
+        public ActionResult CustomerList()
         {
             return View(db.Customers.ToList());
         }
@@ -123,7 +123,7 @@ namespace RentC.UI.Controllers
             Customers customers = db.Customers.Find(id);
             db.Customers.Remove(customers);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("", "Home");
         }
 
         protected override void Dispose(bool disposing)
