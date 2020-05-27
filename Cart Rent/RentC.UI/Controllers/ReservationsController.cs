@@ -7,7 +7,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using RentC.UI.Models;
+using WebGrease.Css.Extensions;
 
 namespace RentC.UI.Controllers
 {
@@ -18,6 +20,7 @@ namespace RentC.UI.Controllers
         // GET: Reservations
         public ActionResult ListRents()
         {
+            UpdateRentStatus();
             var reservations = db.Reservations.Include(r => r.Cars).Include(r => r.Customers).Include(r => r.ReservationStatuses);
             return View(reservations.ToList());
         }
@@ -55,11 +58,11 @@ namespace RentC.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (validateCar(reservations))
+                if (ValidateCar(reservations))
                 {
-                    if(validateCustomer(reservations.CustomerID))
+                    if(ValidateCustomer(reservations.CustomerID))
                     {
-                        if (validateLocation(reservations.Location, reservations.CarID))
+                        if (ValidateLocation(reservations.Location, reservations.CarID))
                         {
                             if (reservations.EndDate > reservations.StartDate)
                             {
@@ -127,11 +130,11 @@ namespace RentC.UI.Controllers
             {
                 if (db.Reservations.Find(reservations.ReservationID) != null)
                 {
-                    if (validateCar(reservations))
+                    if (ValidateCar(reservations))
                     {
-                        if (validateCustomer(reservations.CustomerID))
+                        if (ValidateCustomer(reservations.CustomerID) && ValidateCustomerToUpdate(reservations.ReservationID, reservations.CustomerID)) ////
                         {
-                            if (validateLocation(reservations.Location, reservations.CarID))
+                            if (ValidateLocation(reservations.Location, reservations.CarID))
                             {
                                 if (reservations.EndDate > reservations.StartDate)
                                 {
@@ -161,7 +164,7 @@ namespace RentC.UI.Controllers
                         }
                         else
                         {
-                            ModelState.AddModelError("", "Your ID is not valid");
+                            ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with your ID");
                         }
                     }
                     else
@@ -223,7 +226,7 @@ namespace RentC.UI.Controllers
             base.Dispose(disposing);
         }
 
-        private bool validateCar(Reservations reservations)
+        private bool ValidateCar(Reservations reservations)
         {
             string sDate = reservations.StartDate.ToString("yyyy-MM-dd");
             string eDate = reservations.EndDate.ToString("yyyy-MM-dd");
@@ -239,7 +242,7 @@ namespace RentC.UI.Controllers
             return true;
         }
 
-        private bool validateCustomer(int id)
+        private bool ValidateCustomer(int id)
         {
             if(db.Customers.Find(id) == null)
             {
@@ -249,7 +252,17 @@ namespace RentC.UI.Controllers
             return true;
         }
 
-        private bool validateLocation(string location, int carID)
+        //Used to verify if there's a resservation with the given reservation ID and customer's ID
+        //to be sure that the user won't change other reservations by mistake
+        private bool ValidateCustomerToUpdate(int rentID, int customerID)  
+        {
+            var validateCustomerID = db.Reservations.Where(id => id.ReservationID == rentID && id.CustomerID == customerID);
+            if (validateCustomerID.FirstOrDefault() != null)
+                return true;
+            return false;
+        }
+
+        private bool ValidateLocation(string location, int carID)
         {
             var carAtLocation = db.Database.SqlQuery<int>("Select CarID FROM Cars WHERE Location = @location", new SqlParameter("location", location)).ToList<int>(); ;
             if(carAtLocation.Contains(carID))
@@ -257,6 +270,13 @@ namespace RentC.UI.Controllers
                 return true;
             }
                 return false;
+        }
+
+        private void UpdateRentStatus()
+        {
+            var rent = db.Reservations.Where(r => r.EndDate < DateTime.Now).ToList(); 
+            rent.ForEach(r=>r.ReservStatsID = 2);
+            db.SaveChanges();
         }
     }
 }

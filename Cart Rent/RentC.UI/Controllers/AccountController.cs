@@ -30,23 +30,32 @@ namespace RentC.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var details = (from userList in database.Users
-                               where userList.UserID == user.UserID && userList.Password == user.Password
-                               select new
-                               {
-                                   userList.Roles.Name,
-                                   userList.Roles.Description
-                               }).ToList();
-                if (details.FirstOrDefault() != null)
+                if (user.Enabled == true)
                 {
-                   Session["Name"] = details.FirstOrDefault().Name;
-                   Session["Description"] = details.FirstOrDefault().Description;
+                    var details = (from userList in database.Users
+                                   where userList.UserID == user.UserID && userList.Password == user.Password
+                                   select new
+                                   {
+                                       userList.Roles.Name,
+                                       userList.Roles.Description
 
-                    return RedirectToAction("Welcome", "Account");
+                                   }).ToList();
+
+                    if (details.FirstOrDefault() != null)
+                    {
+                        Session["Name"] = details.FirstOrDefault().Name;
+                        Session["Description"] = details.FirstOrDefault().Description;
+
+                        return RedirectToAction("Welcome", "Account");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Invalid Password or user ID");
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid Password or user ID");
+                    ModelState.AddModelError("", "Account is disable");
                 }
             }
             else
