@@ -11,7 +11,8 @@ namespace RentC.UI.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Coupons
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -19,8 +20,9 @@ namespace RentC.UI.Models
         {
             this.Reservations = new HashSet<Reservations>();
         }
-    
+        [Display(Name = "Cupon Code")]
         public string CouponCode { get; set; }
+        [Display(Name = "Cupon Description")]
         public string Description { get; set; }
         public decimal Discount { get; set; }
     

@@ -28,7 +28,7 @@ namespace RentC.UI.Models
         [Display(Name = "Client Name")]
         public string Name { get; set; }
         [Display(Name = "Birth Date")]
-        public Nullable<System.DateTime> BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         [Required]
         public string Location { get; set; }
     

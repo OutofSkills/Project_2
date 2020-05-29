@@ -4,7 +4,9 @@
     ViewBag.Title = "Available Cars List";
 }
 
-<h2>@Session["Details"].ToString()</h2>
+<h2>@Session["Details"].ToString()</h2> <br />
+
+@Html.ActionLink("New Search", "SubmitCondition")
 
 <table class="table">
     <tr>

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
+using System.Web.UI.WebControls;
 using RentC.UI.Models;
-using WebGrease.Css.Extensions;
 
 namespace RentC.UI.Controllers
 {
@@ -18,14 +14,61 @@ namespace RentC.UI.Controllers
         private RentC_Entities db = new RentC_Entities();
 
         // GET: Reservations
-        public ActionResult ListRents()
+        public ActionResult ListRents(string sortOrder)
         {
+            ViewBag.IDSortParm = String.IsNullOrEmpty(sortOrder) ? "" : "";
+            ViewBag.rNameSortParm = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewBag.PlateSortParm = sortOrder == "Plate" ? "plate_desc" : "Plate";
+            ViewBag.sDateSortParm = sortOrder == "sDate" ? "sdate_desc" : "sDate";
+            ViewBag.eDateSortParm = sortOrder == "eDate" ? "edate_desc" : "eDate";
+            ViewBag.rLocationSortParm = sortOrder == "Location" ? "location_desc" : "Location";
+
+            var rents = from r in db.Reservations
+                        select r;
+
+            switch(sortOrder)
+            {
+                case "name_desc":
+                    rents = rents.OrderByDescending(r => r.Customers.Name);
+                    break;
+                case "Name":
+                    rents = rents.OrderBy(r => r.Customers.Name);
+                    break;
+                case "Plate":
+                    rents = rents.OrderBy(r => r.Cars.Plate);
+                    break;
+                case "plate_desc":
+                    rents = rents.OrderByDescending(r => r.Cars.Plate);
+                    break;
+                case "sDate":
+                    rents = rents.OrderBy(r => r.StartDate);
+                    break;
+                case "sdate_desc":
+                    rents = rents.OrderByDescending(r => r.StartDate);
+                    break;
+                case "eDate":
+                    rents = rents.OrderBy(r => r.EndDate);
+                    break;
+                case "edate_desc":
+                    rents = rents.OrderByDescending(r => r.EndDate);
+                    break;
+                case "Location":
+                    rents = rents.OrderBy(r => r.Location);
+                    break;
+                case "location_desc":
+                    rents = rents.OrderByDescending(r => r.Location);
+                    break;
+                default:
+                    rents = rents.OrderBy(r => r.ReservationID);
+                    break;
+            }
+
+
             UpdateRentStatus();
-            var reservations = db.Reservations.Include(r => r.Cars).Include(r => r.Customers).Include(r => r.ReservationStatuses);
-            return View(reservations.ToList());
+            return View(rents.ToList());
         }
 
-        // GET: Reservations/Details/5
+        // GET: Reservations/Details
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -50,30 +93,28 @@ namespace RentC.UI.Controllers
         }
 
         // POST: Reservations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservations)
+        public ActionResult Create([Bind(Include = "CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservation)
         {
             if (ModelState.IsValid)
             {
-                if (ValidateCar(reservations))
+                if (ValidateCar(reservation))
                 {
-                    if(ValidateCustomer(reservations.CustomerID))
+                    if(ValidateCustomer(reservation.CustomerID))
                     {
-                        if (ValidateLocation(reservations.Location, reservations.CarID))
+                        if (ValidateLocation(reservation.Location, reservation.CarID))
                         {
-                            if (reservations.EndDate > reservations.StartDate)
+                            if (reservation.EndDate > reservation.StartDate && reservation.EndDate > DateTime.Today)
                             {
                                 db.Reservations.Add(new Reservations
                                 {
-                                    CarID = reservations.CarID,
-                                    CustomerID = reservations.CustomerID,
-                                    StartDate = reservations.StartDate,
-                                    EndDate = reservations.EndDate,
-                                    Location = reservations.Location,
-                                    CouponCode = reservations.CouponCode,
+                                    CarID = reservation.CarID,
+                                    CustomerID = reservation.CustomerID,
+                                    StartDate = reservation.StartDate,
+                                    EndDate = reservation.EndDate,
+                                    Location = reservation.Location,
+                                    CouponCode = reservation.CouponCode,
                                     ReservStatsID = 1
                                 });
 
@@ -103,14 +144,14 @@ namespace RentC.UI.Controllers
                 }
             }
 
-            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
-            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
+            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservation.CarID);
+            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservation.CouponCode);
+            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservation.CustomerID);
 
-            return View(reservations);
+            return View();
         }
 
-        // GET: Reservations/Edit/5
+        // GET: Reservations/Edit
         public ActionResult Edit()
         {
             ViewBag.ReservationID = new SelectList(db.Reservations, "ReservationID", "ReservationID");
@@ -124,28 +165,29 @@ namespace RentC.UI.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ReservationID, CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservations)
+        public ActionResult Edit([Bind(Include = "ReservationID, CarID,CustomerID,StartDate,EndDate,Location,CouponCode")] Reservations reservation)
         {
+           
             if (ModelState.IsValid)
             {
-                if (db.Reservations.Find(reservations.ReservationID) != null)
+                if (db.Reservations.Find(reservation.ReservationID) != null)
                 {
-                    if (ValidateCar(reservations))
+                    if (ValidateCar(reservation))
                     {
-                        if (ValidateCustomer(reservations.CustomerID) && ValidateChangeAttempt(reservations.ReservationID, reservations.CustomerID)) ////
+                        if (ValidateCustomer(reservation.CustomerID) && ValidateChangeAttempt(reservation.ReservationID, reservation.CustomerID)) 
                         {
-                            if (ValidateLocation(reservations.Location, reservations.CarID))
+                            if (ValidateLocation(reservation.Location, reservation.CarID))
                             {
-                                if (reservations.EndDate > reservations.StartDate)
+                                if (reservation.EndDate > reservation.StartDate && reservation.EndDate > DateTime.Today)
                                 {
-                                    var details = db.Reservations.Where(d => d.ReservationID == reservations.ReservationID).First();
+                                    var details = db.Reservations.Where(d => d.ReservationID == reservation.ReservationID).First();
 
-                                    details.CarID = reservations.CarID;
-                                    details.CustomerID = reservations.CustomerID;
-                                    details.StartDate = reservations.StartDate;
-                                    details.EndDate = reservations.EndDate;
-                                    details.Location = reservations.Location;
-                                    details.CouponCode = reservations.CouponCode;
+                                    details.CarID = reservation.CarID;
+                                    details.CustomerID = reservation.CustomerID;
+                                    details.StartDate = reservation.StartDate;
+                                    details.EndDate = reservation.EndDate;
+                                    details.Location = reservation.Location;
+                                    details.CouponCode = reservation.CouponCode;
                                     details.ReservStatsID = 1;
 
 
@@ -179,11 +221,11 @@ namespace RentC.UI.Controllers
             }
 
             ViewBag.ReservationID = new SelectList(db.Reservations, "ReservationID", "ReservationID");
-            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservations.CarID);
-            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservations.CouponCode);
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservations.CustomerID);
+            ViewBag.CarID = new SelectList(db.Cars, "CarID", "Plate", reservation.CarID);
+            ViewBag.CouponCode = new SelectList(db.Coupons, "CouponCode", "Description", reservation.CouponCode);
+            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", reservation.CustomerID);
 
-            return View(reservations);
+            return View();
         }
 
         // GET: Reservations/Cancel
@@ -193,27 +235,35 @@ namespace RentC.UI.Controllers
         }
 
         // POST: Reservations/Cancel
-        [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult CancelReservation([Bind(Include = "ReservationID, CustomerID")] Reservations reservations)
+        [ValidateAntiForgeryToken]
+        public ActionResult CancelReservation([Bind(Include = "ReservationID, CustomerID")] Reservations reservation)
         {
+            ModelState.Clear();
             if (ModelState.IsValid)
             {
-                if (ValidateChangeAttempt(reservations.ReservationID, reservations.CustomerID))
+                if (reservation.ReservationID != default(int) && reservation.CustomerID != default(int))
                 {
-                    var rent = db.Reservations.Where(r => r.ReservationID == reservations.ReservationID).ToList();
-                    rent.ForEach(r => r.ReservStatsID = 3);
-                    db.SaveChanges();
+                    if (ValidateChangeAttempt(reservation.ReservationID, reservation.CustomerID))
+                    {
+                        var rent = db.Reservations.Where(r => r.ReservationID == reservation.ReservationID).ToList();
+                        rent.ForEach(r => r.ReservStatsID = 3);
+                        db.SaveChanges();
 
-                    return RedirectToAction("", "Home");
+                        return RedirectToAction("", "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with this ID");
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Your ID is not valid or there's no existing reservation with this ID");
+                    ModelState.AddModelError("", "Invalid inserted data");
                 }
             }
 
-            return View(reservations);
+            return View();
         }
 
         public ActionResult GetRentID()
@@ -230,14 +280,15 @@ namespace RentC.UI.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ValidateCar(Reservations reservations)
+        //Validation for the data input
+        private bool ValidateCar(Reservations reservation)
         {
-            string sDate = reservations.StartDate.ToString("yyyy-MM-dd");
-            string eDate = reservations.EndDate.ToString("yyyy-MM-dd");
+            string sDate = reservation.StartDate.ToString("yyyy-MM-dd");
+            string eDate = reservation.EndDate.ToString("yyyy-MM-dd");
 
             var carList = db.Database.SqlQuery<int>("SELECT DISTINCT ReservationID FROM Reservations WHERE CarID = @carID" +
                 " and ReservationID IN (SELECT ReservationID FROM Reservations WHERE NOT ((StartDate > @endDate) OR (EndDate < @startDate)))"
-                , new SqlParameter("carID", reservations.CarID), new SqlParameter("endDate", eDate), new SqlParameter("startDate", sDate)).ToList();
+                , new SqlParameter("carID", reservation.CarID), new SqlParameter("endDate", eDate), new SqlParameter("startDate", sDate)).ToList();
          
             if (carList.FirstOrDefault() > 0)
             {

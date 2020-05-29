@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -25,7 +26,15 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                    }
+                    else
+                    {
+                        <li id= "UserName">@(User.Identity.IsAuthenticated ? HttpContext.Current.User.Identity.Name : "")</li>
+                        <li> <a href="@Url.Action("Logout","Account")">Sign out</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -41,5 +50,6 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

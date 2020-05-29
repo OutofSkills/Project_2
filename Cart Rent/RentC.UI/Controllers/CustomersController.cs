@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using RentC.UI.Models;
 
@@ -15,12 +12,49 @@ namespace RentC.UI.Controllers
         private RentC_Entities db = new RentC_Entities();
 
         // GET: Customers
-        public ActionResult CustomerList()
+        [Authorize(Roles ="Administrator, Manager, Salesperson")]
+        public ActionResult CustomerList(string sortOrder)
         {
-            return View(db.Customers.ToList());
+            ViewBag.IDSortParm = String.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
+            ViewBag.NameSortParm = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.LocationSortParm = sortOrder == "Location" ? "location_desc" : "Location";
+
+            var customers = from s in db.Customers
+                               select s;
+
+            switch (sortOrder)
+            {
+                case "id_desc":
+                    customers = customers.OrderByDescending(s=>s.CustomerID);
+                    break;
+                case "Name":
+                    customers = customers.OrderBy(s => s.Name);
+                    break;
+                case "name_desc":
+                    customers = customers.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    customers = customers.OrderBy(s => s.BirthDate);
+                    break;
+                case "date_desc":
+                    customers = customers.OrderByDescending(s => s.BirthDate);
+                    break;
+                case "location_desc":
+                    customers = customers.OrderByDescending(s => s.Location);
+                    break;
+                case "Location":
+                    customers = customers.OrderBy(s => s.Location);
+                    break;
+                default:
+                    customers = customers.OrderBy(s => s.CustomerID);
+                    break;
+            }
+            return View(customers.ToList());
         }
 
-        // GET: Customers/Details/5
+        // GET: Customers/Details
+        [Authorize(Roles = "Administrator, Manager, Salesperson")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,23 +70,22 @@ namespace RentC.UI.Controllers
         }
 
         // GET: Customers/Create
+        [Authorize(Roles = "Administrator, Manager, Salesperson")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CustomerID,Name,BirthDate,Location")] Customers customers)
+        public ActionResult Create([Bind(Include = "CustomerID,Name,BirthDate,Location")] Customers customer)
         {
             if (ModelState.IsValid)
             {
-                if (ValidateID(customers.CustomerID))
+                if (ValidateID(customer.CustomerID))
                 {
-                    db.Customers.Add(customers);
+                    db.Customers.Add(customer);
                     db.SaveChanges();
                     return RedirectToAction("", "Home");
                 }
@@ -62,10 +95,11 @@ namespace RentC.UI.Controllers
                 }
             }
 
-            return View(customers);
+            return View(customer);
         }
 
         // GET:
+        [Authorize(Roles = "Administrator, Manager, Salesperson")]
         public ActionResult Edit()
         {
             return View();
@@ -73,19 +107,19 @@ namespace RentC.UI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CustomerID,Name,BirthDate,Location")] Customers customers)
+        public ActionResult Edit([Bind(Include = "CustomerID,Name,BirthDate,Location")] Customers customer)
         {
             if (ModelState.IsValid)
             {
-                if (!ValidateID(customers.CustomerID))
+                if (!ValidateID(customer.CustomerID))
                 {
-                    var details = db.Customers.Where(c => c.CustomerID == customers.CustomerID).ToList();
+                    var details = db.Customers.Where(c => c.CustomerID == customer.CustomerID).ToList();
 
                     details.ForEach(c =>
                     {
-                        c.Name = customers.Name;
-                        c.BirthDate = customers.BirthDate;
-                        c.Location = customers.Location;
+                        c.Name = customer.Name;
+                        c.BirthDate = customer.BirthDate;
+                        c.Location = customer.Location;
                     });
 
                     db.SaveChanges();
@@ -97,31 +131,32 @@ namespace RentC.UI.Controllers
                 }
             }
 
-            return View(customers);
+            return View(customer);
         }
 
-        // GET: Customers/Delete/5
+        // GET: Customers/Delete
+        [Authorize(Roles = "Administrator, Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customers customers = db.Customers.Find(id);
-            if (customers == null)
+            Customers customer = db.Customers.Find(id);
+            if (customer == null)
             {
                 return HttpNotFound();
             }
-            return View(customers);
+            return View(customer);
         }
 
-        // POST: Customers/Delete/5
+        // POST: Customers/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customers customers = db.Customers.Find(id);
-            db.Customers.Remove(customers);
+            Customers customer = db.Customers.Find(id);
+            db.Customers.Remove(customer);
             db.SaveChanges();
             return RedirectToAction("", "Home");
         }

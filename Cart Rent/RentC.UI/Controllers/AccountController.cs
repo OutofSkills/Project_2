@@ -1,24 +1,16 @@
 ﻿using RentC.UI.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace RentC.UI.Controllers
 {
-    
+
     public class AccountController : Controller
     {
         // GET: Account
         private readonly RentC_Entities database = new RentC_Entities();
-
-        public ActionResult Welcome()
-        {
-            return View();
-        }
-
-
+       
         public ActionResult Login()
         {
             return View();
@@ -30,7 +22,7 @@ namespace RentC.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (user.Enabled == true)
+                if (user.Enabled != true)
                 {
                     var details = (from userList in database.Users
                                    where userList.UserID == user.UserID && userList.Password == user.Password
@@ -44,8 +36,8 @@ namespace RentC.UI.Controllers
                     if (details.FirstOrDefault() != null)
                     {
                         Session["Name"] = details.FirstOrDefault().Name;
-                        Session["Description"] = details.FirstOrDefault().Description;
 
+                        FormsAuthentication.SetAuthCookie(details.FirstOrDefault().Name, false);
                         return RedirectToAction("Welcome", "Account");
                     }
                     else
@@ -66,5 +58,17 @@ namespace RentC.UI.Controllers
 
             return View(user);
         }
+       
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login");
+        }
+
+        public ActionResult Welcome()
+        {
+            return View();
+        }
+
     }
 }

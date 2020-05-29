@@ -11,16 +11,25 @@ namespace RentC.UI.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Reservations
     {
         public int ReservationID { get; set; }
+        [Required]
         public int CarID { get; set; }
+        [Required]
         public int CustomerID { get; set; }
         public byte ReservStatsID { get; set; }
+        [Required]
+        [Display(Name ="Start Date")]
         public System.DateTime StartDate { get; set; }
+        [Required]
+        [Display(Name = "End Date")]
         public System.DateTime EndDate { get; set; }
+        [Required]
         public string Location { get; set; }
+        [Display(Name = "Cupon Code")]
         public string CouponCode { get; set; }
         public string CartPlate { get; set; }
     

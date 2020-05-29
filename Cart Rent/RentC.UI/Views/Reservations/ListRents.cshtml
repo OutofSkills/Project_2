@@ -9,19 +9,19 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Cars.Plate)
+            @Html.ActionLink("Car Plate", "ListRents", new { sortOrder = ViewBag.PlateSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Customers.CustomerID)
+            @Html.ActionLink("Client Name", "ListRents", new { sortOrder = ViewBag.rNameSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.StartDate)
+            @Html.ActionLink("Start Date", "ListRents", new { sortOrder = ViewBag.sDateSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EndDate)
+            @Html.ActionLink("End Date", "ListRents", new { sortOrder = ViewBag.eDateSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Location)
+            @Html.ActionLink("Location", "ListRents", new { sortOrder = ViewBag.rLocationSortParm })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ReservationStatuses.Name)

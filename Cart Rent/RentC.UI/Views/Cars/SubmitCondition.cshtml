@@ -67,6 +67,8 @@
     <script>
         $("#StartDate").rules("remove", "required");
         $("#EndDate").rules("remove", "required");
+        $("#StartDate").attr('disabled', disabledValue);
+        $("#EndDate").attr('disabled', disabledValue);
     </script>
 
 }

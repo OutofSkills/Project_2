@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
 using RentC.UI.Models;
 
 namespace RentC.UI.Controllers
@@ -25,7 +20,9 @@ namespace RentC.UI.Controllers
         [HttpPost]
         public ActionResult SubmitCondition([Bind(Include = "StartDate,EndDate,Location")] Reservations reservation)
         {
-            
+            if (reservation.StartDate <= reservation.EndDate)
+            {
+
                 if (reservation.StartDate != default)
                     TempData["StartDate"] = reservation.StartDate;
                 else
@@ -35,13 +32,15 @@ namespace RentC.UI.Controllers
                     TempData["EndDate"] = reservation.EndDate;
                 else
                     TempData["EndDate"] = null;
-              
+
                 if (reservation.Location != default)
                     TempData["Location"] = reservation.Location;
                 else
                     TempData["Location"] = null;
-            
-            return Redirect("/Cars/DisplayCars");
+            }
+
+             return Redirect("/Cars/DisplayCars");
+                
         }
 
   

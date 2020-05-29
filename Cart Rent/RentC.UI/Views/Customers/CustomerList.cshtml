@@ -9,18 +9,18 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CustomerID)
+            @Html.ActionLink("Client ID", "CustomerList", new { sortOrder = ViewBag.IDSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.ActionLink("Client Name", "CustomerList", new { sortOrder = ViewBag.NameSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.BirthDate)
+            @Html.ActionLink("Birth Date", "CustomerList", new { sortOrder = ViewBag.DateSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Location)
+            @Html.ActionLink("Location", "CustomerList", new { sortOrder = ViewBag.LocationSortParm })
         </th>
-        <th></th>
+       
     </tr>
 
     @foreach (var item in Model)
@@ -39,7 +39,8 @@
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.CustomerID })
+                @Html.ActionLink("Details", "Details", new { id = item.CustomerID })|
+                @Html.ActionLink("Delete", "Delete", new { id = item.CustomerID })
             </td>
         </tr>
     }

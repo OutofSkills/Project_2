@@ -4,6 +4,13 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+#UserName {
+    color: darkgray;
+    display: inline-block;
+    padding: 12px;
+    font-size: 120%;
+    left: 10px;
+}
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
