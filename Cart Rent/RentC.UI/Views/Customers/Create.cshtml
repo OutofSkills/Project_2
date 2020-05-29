@@ -5,7 +5,10 @@
 }
 
 <h2>New Customer</h2>
-
+@Scripts.Render("~/Scripts/jquery-3.1.1.js")
+@Scripts.Render("~/Scripts/jquery.validate.min.js")
+@Scripts.Render("~/Scripts/jquery.validate.unobtrusive.min.js")
+@Scripts.Render("~/Scripts/moment.js")
 
 @using (Html.BeginForm())
 {
@@ -60,7 +63,6 @@
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <script type="text/javascript">
